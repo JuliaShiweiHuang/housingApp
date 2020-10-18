@@ -10,8 +10,8 @@ app = Flask(__name__)
 
 #config mySQL
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWIRD'] = '123456'
+app.config['MYSQL_USER'] = 'shiwei'
+app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'myflaskapp'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
@@ -28,6 +28,9 @@ def index():
 def about():
     return render_template('about.html')
 
+@app.route('/home')
+def home():
+    return render_template('home.html')
 
 @app.route('/resources')
 def resources():
@@ -45,14 +48,13 @@ class RegisterForm(Form):
     password = PasswordField('Password', [
         validators.DataRequired(),
         validators.EqualTo('confirm', message = 'Passwords do not match')
-
-
     ])
     confirm = PasswordField('Confirm Password')
 
 @app.route('/register', methods = ['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
+    print(request.form)
     if request.method == 'POST' and form.validate():
         name = form.name.data
         email = form.email.data
@@ -73,8 +75,8 @@ def register():
 
         flash('You are now registered and can login', 'success')
         #redirect
-        return redirect(url_for('login'))
-
+        return redirect(url_for('home'))
+        #return render_template('home.html')
         
     return render_template('register.html', form=form)
 
