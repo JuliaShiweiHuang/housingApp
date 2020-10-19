@@ -56,7 +56,7 @@ def resource(id):
     #get houses
     result = cur.execute("SELECT * FROM articles WHERE id = %s", [id])
 
-    articles = cur.fetchone()
+    resource = cur.fetchone()
     return render_template('resource.html', resource=resource)    
 
 #register form class
@@ -168,17 +168,18 @@ def logout():
 @app.route('/dashboard')
 @is_logged_in
 def dashboard():
+    #create cursor
     cur = mysql.connection.cursor()
-
     #get houses
     result = cur.execute("SELECT * FROM articles")
 
-    articles = cur.fetchall()
+    houses = cur.fetchall()
     if result > 0:
-        return render_template('dashboard.html', resources=resources)
+        return render_template('dashboard.html', houses=houses)
     else:
         msg = 'No Houses Found'
-        return render_template('dashboard.html')
+        return render_template('dashboard.html', msg=msg)
+    # close the connection
     cur.close()
 
 
@@ -207,7 +208,7 @@ def add_house():
         #close connection
         cur.close()
         
-        flash('Article Created', 'success')
+        flash('Resource Created', 'success')
 
         return redirect(url_for('dashboard'))
     return render_template('add_house.html', form=form)
