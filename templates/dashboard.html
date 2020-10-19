@@ -13,13 +13,13 @@
             <th></th>
             <th></th>
         </tr>
-        {% for article in articles %}
+        {% for resource in resources %}
             <tr>    
-                <td>{{article.id}}</td>
-                <td>{{article.title}}</td>
-                <td>{{article.author}}</td>
-                <td>{{article.create_date}}</td>
-                <td><a href="edit_house/{{article.id}}" class = "btn btn-default pull-right">Edit</a></td>
+                <td>{{resource.id}}</td>
+                <td>{{resource.title}}</td>
+                <td>{{resource.author}}</td>
+                <td>{{resource.create_date}}</td>
+                <td><a href="edit_house/{{resource.id}}" class = "btn btn-default pull-right">Edit</a></td>
                 <td><a href="#" class = "btn btn-danger">Delete</a></td>
                                 
             </tr>

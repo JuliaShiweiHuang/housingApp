@@ -34,14 +34,15 @@ def home():
 
 @app.route('/resources')
 def resources():
+    # creating a cursor; connection to a database server 
     cur = mysql.connection.cursor()
 
     #get houses
     result = cur.execute("SELECT * FROM articles")
 
-    articles = cur.fetchall()
+    resources = cur.fetchall()
     if result > 0:
-        return render_template('resources.html', articles=articles)
+        return render_template('resources.html', resources=resources)
     else:
         msg = 'No Houses Found'
         return render_template('resources.html', msg=msg)
