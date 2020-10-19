@@ -34,12 +34,31 @@ def home():
 
 @app.route('/resources')
 def resources():
-    return render_template('resources.html', resources = Resources)    
+    # creating a cursor; connection to a database server 
+    cur = mysql.connection.cursor()
+
+    #get houses
+    result = cur.execute("SELECT * FROM articles")
+
+    resources = cur.fetchall()
+    if result > 0:
+        return render_template('resources.html', resources=resources)
+    else:
+        msg = 'No Houses Found'
+        return render_template('resources.html', msg=msg)
+    cur.close()
+
 
 
 @app.route('/resource/<string:id>')
 def resource(id):
-    return render_template('resource.html', id=id)    
+    cur = mysql.connection.cursor()
+
+    #get houses
+    result = cur.execute("SELECT * FROM articles WHERE id = %s", [id])
+
+    resource = cur.fetchone()
+    return render_template('resource.html', resource=resource)    
 
 #register form class
 class RegisterForm(Form):
@@ -138,6 +157,7 @@ def is_logged_in(f):
 
 
 @app.route('/logout')
+@is_logged_in
 def logout():
     session.clear()
     flash('You are now logged out', 'success')
@@ -149,8 +169,108 @@ def logout():
 @app.route('/dashboard')
 @is_logged_in
 def dashboard():
-    return render_template('dashboard.html')
+    #create cursor
+    cur = mysql.connection.cursor()
+    #get houses
+    result = cur.execute("SELECT * FROM articles")
 
+    resources = cur.fetchall()
+    if result > 0:
+        return render_template('dashboard.html', resources=resources)
+    else:
+        msg = 'No Houses Found'
+        return render_template('dashboard.html', msg=msg)
+    # close the connection
+    cur.close()
+
+
+#register form class
+class ArticleForm(Form):
+    title = StringField('Title', [validators.Length(min = 1, max = 200)])
+    body = TextAreaField('Body', [validators.Length(min = 1)])
+    
+
+@app.route('/add_house', methods=['GET', 'POST'])
+@is_logged_in
+def add_house():
+    form = ArticleForm(request.form)
+    if request.method == 'POST' and form.validate():
+        title = form.title.data
+        body = form.body.data
+
+        #create cursor
+        cur = mysql.connection.cursor()
+
+        # execute
+        cur.execute("INSERT INTO articles(title, body, author) VALUES(%s, %s, %s)", (title, body, session['username']))
+        #commit to DB
+        mysql.connection.commit()
+
+        #close connection
+        cur.close()
+        
+        flash('Resource Created', 'success')
+
+        return redirect(url_for('dashboard'))
+    return render_template('add_house.html', form=form)
+
+
+
+@app.route('/edit_house/<string:id>', methods=['GET', 'POST'])
+@is_logged_in
+def edit_house(id):
+    # create cursor
+    cur = mysql.connection.cursor()
+
+    # get the house by id
+    result = cur.execute("SELECT * FROM articles WHERE id = %s", [id])
+
+    resource = cur.fetchone()
+
+    # get form
+    form = ArticleForm(request.form)
+
+    # populate article form fields
+    form.title.data = resource['title']
+    form.body.data = resource['body']
+
+    #form = ArticleForm(request.form)
+    if request.method == 'POST' and form.validate():
+        title = request.form['title']
+        body = request.form['body']
+
+        #create cursor
+        cur = mysql.connection.cursor()
+
+        # execute
+        cur.execute("UPDATE articles SET title=%s, body=%s WHERE id = %s", (title, body, id))
+        #commit to DB
+        mysql.connection.commit()
+
+        #close connection
+        cur.close()
+        
+        flash('Resource Updated', 'success')
+
+        return redirect(url_for('dashboard'))
+    return render_template('edit_house.html', form=form)
+
+@app.route('/delete_article/<string:id>', methods = ['POST'])
+@is_logged_in
+def delete_article(id):
+    #create cursor
+    cur = mysql.connection.cursor()
+
+    #execute
+    cur.execute("DELETE FROM articles WHERE id= %s", [id])
+    #commit to DB
+    mysql.connection.commit()
+
+    #close connection
+    cur.close()
+
+    flash('Article Deleted', 'success')
+    return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
     app.secret_key='secret@@@'

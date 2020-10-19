@@ -1,6 +1,11 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <h1>{{id}}</h1>
-    
-{% endblock %}
+    <h1>{{resource.title}}</h1>
+    <small>Written by {{resource.author}} on {{resource.create_date}}</small>
+    <hr>
+    <div>
+        {{resource.body | safe}}
+    </div>
+
+    {% endblock %}

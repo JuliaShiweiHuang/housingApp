@@ -2,5 +2,34 @@
 
 {% block body %}
     <h1>Dashboard <small> Welcome {{session.username}}</small></h1>
-    
+    <a class = "btn btn-success" href="/add_house">Add House</a>
+    <hr>
+    <table class = "table table-striped">
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Landlord</th>
+            <th>Date</th>
+            <th></th>
+            <th></th>
+        </tr>
+        {% for resource in resources %}
+            <tr>    
+                <td>{{resource.id}}</td>
+                <td>{{resource.title}}</td>
+                <td>{{resource.author}}</td>
+                <td>{{resource.create_date}}</td>
+                <td><a href="edit_house/{{resource.id}}" class = "btn btn-default pull-right">Edit</a></td>
+                <td>
+                    <form action = "{{url_for('delete_article', id=resource.id)}}" method = "post">
+                        <input type = "hidden" name = "_method" value="DELETE">
+                        <input type = "submit" value = "Delete" class = "btn btn-danger">
+
+                    </form>
+                </td>
+                                
+            </tr>
+        {% endfor %}
+
+    </table>
 {% endblock %}
