@@ -2,9 +2,11 @@
 
 {%block body%}
 <div class = "jumbotron text-center">
-    <h1>Welcome To Off-Campus Housing </h1>
+    <h1>Welcome To RPI Housing </h1>
     <p class = "lead">Find housing resources here...</p>
-
+    <!-- <img src="/templates/unsplash.jpg" alt="credit to unsplash website" class="img-thumbnail"> -->
+    <img src="{{url_for('static', filename='unsplash2.jpg')}}"
+    align="middle" alt = "credit to upsplash website" class="img-thumbnail"/>
     {% if session.logged_in == NULL %}
         <a href = "/register" class = "btn btn-primary btn-lg">Register</a>
         <a href = "/login" class = "btn btn-success btn-lg">Login</a>
