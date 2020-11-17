@@ -1,9 +1,11 @@
 from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
+#from flask_cas import CAS
 from data import Resources
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
+
 
 app = Flask(__name__)
 
@@ -14,7 +16,9 @@ app.config['MYSQL_USER'] = 'shiwei'
 app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'myflaskapp'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+app.config['CAS_SERVER'] = ''
 
+app.config['CAS_AFTER_LOGIN'] = 'route_root'
 #initialize mySQL
 mysql = MySQL(app)
 
@@ -31,6 +35,10 @@ def about():
 @app.route('/home')
 def home():
     return render_template('home.html')
+
+@app.route('/caslogin')
+def caslogin():
+    return render_template('caslogin.html')
 
 @app.route('/resources')
 def resources():
