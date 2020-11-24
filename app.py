@@ -56,7 +56,12 @@ def resources():
         return render_template('resources.html', msg=msg)
     cur.close()
 
-
+@app.route('/form')
+def form():
+    if request.method == "POST":
+        req = request.formprint(req)
+        return redirect(request.url)
+    return render_template('resource.html')
 
 @app.route('/resource/<string:id>')
 def resource(id):
